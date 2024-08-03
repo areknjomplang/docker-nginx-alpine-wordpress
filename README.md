@@ -5,4 +5,4 @@ A simple starter for local WordPress developmant.
 - Run `docker compose build` && `docker compose up -d`
 - Open `https://localhost.test` on your browser.
 
->> Use `mkcert` to create a local CA (Certificate Authority), i.e `mkcert localhost.test`.
+> Use `mkcert` to create a local CA (Certificate Authority), i.e `mkcert localhost.test`.
