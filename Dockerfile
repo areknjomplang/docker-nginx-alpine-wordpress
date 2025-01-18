@@ -1,7 +1,7 @@
 FROM mariadb:latest AS db
 COPY ./config/mysql.cnf /etc/mysql/conf.d/mysql.cnf
 
-FROM wordpress:6.6.2-php8.3-fpm-alpine as wp
+FROM wordpress:6.7.1-php8.3-fpm-alpine as wp
 RUN set -ex; \
     apk --no-cache add sudo \
     && rm -rf /var/cache/apk/*
