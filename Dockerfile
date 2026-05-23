@@ -1,7 +1,7 @@
 FROM mariadb:latest AS db
 COPY ./config/mysql.cnf /etc/mysql/conf.d/mysql.cnf
 
-FROM wordpress:6.9.4-php8.4-fpm-alpine AS wp
+FROM wordpress:7.0.0-php8.4-fpm-alpine AS wp
 RUN set -ex; \
     apk --no-cache add sudo \
     && rm -rf /var/cache/apk/*
@@ -11,7 +11,7 @@ WORKDIR /var/www/html
 RUN chown -R nobody:nobody /var/www/html
 USER nobody
 
-FROM nginx:1.31.1-alpine3.23 AS server
+FROM nginx:1.30.2-alpine3.23 AS server
 RUN set -x; \
     addgroup -g 1000 -S www-data ; \
     adduser -u 1000 -D -S -G www-data www-data && exit 0 ; exit 1
