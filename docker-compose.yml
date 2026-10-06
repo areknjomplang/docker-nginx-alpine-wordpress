@@ -34,7 +34,7 @@ services:
   adminer:
     image: docker.io/adminer:latest
     container_name: adminer
-    restart: always
+    restart: unless-stopped
     environment:
       ADMINER_DESIGN: hever
     ports:
@@ -46,7 +46,7 @@ services:
     build: .
     image: starter/wp
     container_name: wp
-    restart: always
+    restart: unless-stopped
     environment:
       WORDPRESS_DB_HOST: "db:3306"
       WORDPRESS_DB_USER: root
@@ -83,7 +83,7 @@ services:
   nginx:
     image: docker.io/nginx:1.31.6-alpine3.24
     container_name: nginx
-    restart: always
+    restart: unless-stopped
     volumes:
       - wp_data:/var/www/html:ro
       - ./logs/nginx:/var/log/nginx
