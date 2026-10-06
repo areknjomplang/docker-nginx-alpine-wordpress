@@ -1,29 +1,21 @@
-FROM mariadb:latest AS db
-COPY ./config/mysql.cnf /etc/mysql/conf.d/mysql.cnf
+FROM wordpress:7.1.2-php8.5-fpm-alpine
 
-FROM wordpress:7.1.2-php8.5-fpm-alpine AS wp
-RUN set -ex; \
-    apk --no-cache add sudo \
-    && rm -rf /var/cache/apk/*
+# Install PHP Extensions melalui MLocati installer
+COPY --from=docker.io/mlocati/php-extension-installer:latest /usr/bin/install-php-extensions /usr/local/bin/
+RUN install-php-extensions redis
 
-VOLUME /var/www/html
-WORKDIR /var/www/html
-RUN chown -R nobody:nobody /var/www/html
-USER nobody
+# Install Composer
+COPY --from=docker.io/library/composer:2.10.3 /usr/bin/composer /usr/local/bin/composer
 
-FROM nginx:1.31.6-alpine3.24 AS server
-RUN set -x; \
-    addgroup -g 1000 -S www-data ; \
-    adduser -u 1000 -D -S -G www-data www-data && exit 0 ; exit 1
-
+# Install WP-CLI
 RUN set -eux; \
-    apk update && apk --no-cache add \
-    curl \
-    && addgroup www-data nginx \
-    && rm -rf /var/cache/apk/*
+    curl -fsSL -o /tmp/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar; \
+    EXPECTED="$(curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar.sha512)"; \
+    echo "$EXPECTED  /tmp/wp-cli.phar" | sha512sum -c -; \
+    chmod +x /tmp/wp-cli.phar; \
+    mv /tmp/wp-cli.phar /usr/local/bin/wp
 
-VOLUME /var/www/html
-WORKDIR /var/www/html
-RUN chown -R nobody:nobody /var/www/html
+RUN mkdir -p /var/www/html/wp-content/cache
 
-CMD ["nginx", "-g", "daemon off;"]
+# Ensure wp-content/cache is owned by www-data
+RUN chown -R www-data:www-data /var/www/html/wp-content/cache
