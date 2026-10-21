@@ -1,4 +1,4 @@
-FROM wordpress:7.1.2-php8.5-fpm-alpine
+FROM wordpress:7.1.3-php8.5-fpm-alpine
 
 # Install PHP Extensions melalui MLocati installer
 COPY --from=docker.io/mlocati/php-extension-installer:latest /usr/bin/install-php-extensions /usr/local/bin/
